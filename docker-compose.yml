@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+
+  # ウェブサーバー
+  web:
+    build:
+      context: .
+      dockerfile: dockerfile
+    
+    container_name: nondelies_web
+    
+    ports:
+      - "8081:80"
+      
+    volumes:
+      - ./src:/var/www/html
+      
+    # 依存関係
+    depends_on:
+      - db
+      
+    # 環境変数
+    environment:
+      TZ: Asia/Tokyo
+      
+
+  # データベース
+  db:
+    image: mysql:8.0 
+
+    container_name: nondelies_db
+
+    # 環境変数
+    environment:
+      # ルートユーザーのパスワード
+      MYSQL_ROOT_PASSWORD: 1017god25 
+      # アプリケーションが使用するデータベース名
+      MYSQL_DATABASE: ndl_db 
+      # アプリケーションが使用するユーザー名
+      MYSQL_USER: ndl_user 
+      # アプリケーションが使用するユーザーのパスワード
+      MYSQL_PASSWORD:  ndl_passwd
+
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db-init:/docker-entrypoint-initdb.d
+      
+
+volumes:
+  db_data:
