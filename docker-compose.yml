@@ -6,29 +6,37 @@ services:
   web:
     build:
       context: .
-      dockerfile: dockerfile
-    
+      dockerfile: dockerfile 
     container_name: nondelies_web
-    
     ports:
       - "8081:80"
-      
     volumes:
-      - ./src:/var/www/html
-      
+      - ./src:/var/www/html  
     # 依存関係
     depends_on:
-      - db
-      
+      - db 
     # 環境変数
     environment:
       TZ: Asia/Tokyo
       
 
+  # PythonAPI
+  python_api:
+    build: 
+      context: ./python_api
+      dockerfile: dockerfile.python
+    container_name: nondelies_python
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./python_api:/app
+    depends_on:
+      - web
+
+
   # データベース
   db:
     image: mysql:8.0 
-
     container_name: nondelies_db
 
     # 環境変数
@@ -45,7 +53,6 @@ services:
     volumes:
       - db_data:/var/lib/mysql
       - ./db-init:/docker-entrypoint-initdb.d
-      
 
 volumes:
   db_data:
